@@ -1,35 +1,35 @@
 {
-	"schemaVersion": 1,
-	"id": "allure",
-	"version": "${version}",
-	"name": "Allure",
-	"description": "This is an example description! Tell everyone what your mod is about!",
-	"authors": [
-		"Me!"
-	],
-	"license": "ARR",
-	"icon": "assets/allure/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"net.acoyt.allure.impl.Allure"
-		],
-		"client": [
-			"net.acoyt.allure.impl.AllureClient"
-		],
-		"fabric-datagen": [
-			"net.acoyt.allure.data.AllureDatagen"
-		]
-	},
-	"accessWidener": "allure.classtweaker",
-	"mixins": [
-		"allure.mixins.json"
-	],
-	"depends": {
-		"fabricloader": ">=0.19.0",
-		"minecraft": "~26.1.2",
-		"java": ">=21",
-		"fabric-api": "*",
-		"acornlib": "*"
-	}
+    "schemaVersion": 1,
+    "id": "allure",
+    "version": "${version}",
+    "name": "Allure",
+    "description": "This is an example description! Tell everyone what your mod is about!",
+    "authors": [
+        "Me!"
+    ],
+    "license": "ARR",
+    "icon": "assets/allure/icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "net.acoyt.allure.impl.Allure"
+        ],
+        "client": [
+            "net.acoyt.allure.impl.AllureClient"
+        ],
+        "fabric-datagen": [
+            "net.acoyt.allure.data.AllureDatagen"
+        ]
+    },
+    "accessWidener": "allure.classtweaker",
+    "mixins": [
+        "allure.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.19.0",
+        "minecraft": "~26.1.2",
+        "java": ">=21",
+        "fabric-api": "*",
+        "acornlib": "*"
+    }
 }
