@@ -3,9 +3,9 @@
     "id": "allure",
     "version": "${version}",
     "name": "Allure",
-    "description": "This is an example description! Tell everyone what your mod is about!",
+    "description": "",
     "authors": [
-        "Me!"
+        "AcoYT"
     ],
     "license": "ARR",
     "icon": "assets/allure/icon.png",
