@@ -1,36 +1,32 @@
 {
 	"schemaVersion": 1,
-	"id": "template",
+	"id": "allure",
 	"version": "${version}",
-	"name": "Template",
+	"name": "Allure",
 	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
 		"Me!"
 	],
-	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
-	},
-	"license": "CC0-1.0",
-	"icon": "assets/template/icon.png",
+	"license": "ARR",
+	"icon": "assets/allure/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.example.template.impl.Template"
+			"net.acoyt.allure.impl.Allure"
 		],
 		"client": [
-			"com.example.template.impl.TemplateClient"
+			"net.acoyt.allure.impl.AllureClient"
 		],
 		"fabric-datagen": [
-			"com.example.template.data.TemplateDatagen"
+			"net.acoyt.allure.data.AllureDatagen"
 		]
 	},
-	"accessWidener": "template.accesswidener",
+	"accessWidener": "allure.classtweaker",
 	"mixins": [
-		"template.mixins.json"
+		"allure.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.15.11",
+		"fabricloader": ">=0.19.0",
 		"minecraft": "~26.1.2",
 		"java": ">=21",
 		"fabric-api": "*",

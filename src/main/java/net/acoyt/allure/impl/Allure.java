@@ -1,12 +1,12 @@
-package com.example.template.impl;
+package net.acoyt.allure.impl;
 
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 
-public class Template implements ModInitializer {
-	public static final String MOD_ID = "template";
+public class Allure implements ModInitializer {
+	public static final String MOD_ID = "allure";
 	public static final Logger LOGGER = LogUtils.getLogger();
 
 	public void onInitialize() {
