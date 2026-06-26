@@ -16,6 +16,7 @@ import java.util.Map;
  */
 public class AllureReloadListener extends SimpleReloadListener<Map<Identifier, AllureEntry>> {
     public static final Map<Identifier, AllureEntry> ALLURES = new HashMap<>();
+    public static final Map<AllureEntry, Identifier> BACKWARDS = new HashMap<>();
 
     public Map<Identifier, AllureEntry> prepare(SharedState state) {
         Map<Identifier, AllureEntry> raw = new HashMap<>();
@@ -30,5 +31,6 @@ public class AllureReloadListener extends SimpleReloadListener<Map<Identifier, A
     public void apply(Map<Identifier, AllureEntry> prepared, SharedState state) {
         ALLURES.clear();
         ALLURES.putAll(prepared);
+        ALLURES.forEach((id, entry) -> BACKWARDS.put(entry, id));
     }
 }
