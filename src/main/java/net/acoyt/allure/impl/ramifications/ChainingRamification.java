@@ -1,7 +1,7 @@
 package net.acoyt.allure.impl.ramifications;
 
 import net.acoyt.allure.impl.cca.entity.ChainingComponent;
-import net.acoyt.allure.impl.util.AllureUtil;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,15 +24,19 @@ public class ChainingRamification implements Ramification {
     }
 
     public void onAttack(Player player, Entity target, ItemStack stack) {
-        if (player.getRandom().nextFloat() > chance && target instanceof LivingEntity living && AllureUtil.isCritting(player, target)) {
+        if (player.getRandom().nextFloat() > chance && target instanceof LivingEntity living) {
+            player.sendOverlayMessage(Component.literal("Silly billy hehe :3"));
+
             List<LivingEntity> entities = player.level().getEntitiesOfClass(
                     LivingEntity.class,
                     new AABB(player.getOnPos().atY(player.getBlockY())).inflate(range),
                     EntitySelector.NO_CREATIVE_OR_SPECTATOR.and(e -> e != player)
             );
 
-            entities.forEach(entity -> ChainingComponent.KEY.get(entity).addChainedEntries(living));
-            ChainingComponent.KEY.get(living).addChainedEntries(entities.toArray(LivingEntity[]::new));
+            if (!entities.isEmpty()) {
+                entities.forEach(entity -> ChainingComponent.KEY.get(entity).addChainedEntries(living));
+                ChainingComponent.KEY.get(living).addChainedEntries(entities.toArray(LivingEntity[]::new));
+            }
         }
     }
 }

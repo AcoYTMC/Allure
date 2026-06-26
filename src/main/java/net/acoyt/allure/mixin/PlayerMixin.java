@@ -3,7 +3,6 @@ package net.acoyt.allure.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.acoyt.allure.impl.component.AllureComponent;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -23,34 +22,14 @@ public abstract class PlayerMixin extends Avatar {
     }
 
     @WrapOperation(
-            method = "attack",
+            method = {"attack","stabAttack"},
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/entity/Entity;hurtOrSimulate(Lnet/minecraft/world/damagesource/DamageSource;F)Z"
+                    target = "Lnet/minecraft/world/entity/player/Player;setLastHurtMob(Lnet/minecraft/world/entity/Entity;)V"
             )
     )
-    private boolean allure$onAttackRamifications(Entity instance, DamageSource source, float damage, Operation<Boolean> original) {
-        boolean value = original.call(instance, source, damage);
-        if (value) {
-            AllureComponent.getRamifications(this.getMainHandItem()).forEach(ramification -> ramification.onAttack((Player)(Object)this, instance, this.getMainHandItem()));
-        }
-
-        return value;
-    }
-
-    @WrapOperation(
-            method = "stabAttack",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/entity/Entity;hurtOrSimulate(Lnet/minecraft/world/damagesource/DamageSource;F)Z"
-            )
-    )
-    private boolean allure$onStabAttackRamifications(Entity instance, DamageSource source, float damage, Operation<Boolean> original) {
-        boolean value = original.call(instance, source, damage);
-        if (value) {
-            AllureComponent.getRamifications(this.getMainHandItem()).forEach(ramification -> ramification.onAttack((Player)(Object)this, instance, this.getMainHandItem()));
-        }
-
-        return value;
+    private void allure$onAttackRamifications(Player instance, Entity entity, Operation<Void> original) {
+        original.call(instance, entity);
+        AllureComponent.getRamifications(instance.getMainHandItem()).forEach(ramification -> ramification.onAttack(instance, entity, instance.getMainHandItem()));
     }
 }

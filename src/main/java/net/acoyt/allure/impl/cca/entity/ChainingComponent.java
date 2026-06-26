@@ -39,10 +39,12 @@ public class ChainingComponent implements AutoSyncedComponent, CommonTickingComp
     }
 
     public void tick() {
+        if (living.isRemoved() || !living.isAlive()) return;
         for (ChainedEntry entry : chainedEntries) {
             entry.tick();
             if (entry.shouldEnd()) {
                 chainedEntries.remove(entry);
+                Allure.LOGGER.info("Removed the silly from {}!", living.getScoreboardName());
             }
         }
     }
