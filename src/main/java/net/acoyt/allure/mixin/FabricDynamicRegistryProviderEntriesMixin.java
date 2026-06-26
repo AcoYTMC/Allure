@@ -14,6 +14,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author KaboomRoads
+ */
 @Mixin(value = FabricDynamicRegistryProvider.Entries.class, remap = false)
 public abstract class FabricDynamicRegistryProviderEntriesMixin {
     @WrapOperation(
