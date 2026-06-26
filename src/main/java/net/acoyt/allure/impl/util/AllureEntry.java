@@ -6,20 +6,23 @@ import net.acoyt.allure.impl.Allure;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.world.item.Item;
 
 /**
  * @author AcoYT
  */
-public record AllureEntry(Component name, Component description) {
+public record AllureEntry(Component name, Component description, HolderSet<Item> supportedItems) {
     public static final Codec<AllureEntry> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ComponentSerialization.CODEC.fieldOf("name").forGetter(AllureEntry::name),
-            ComponentSerialization.CODEC.fieldOf("description").forGetter(AllureEntry::description)
+            ComponentSerialization.CODEC.fieldOf("description").forGetter(AllureEntry::description),
+            RegistryCodecs.homogeneousList(Registries.ITEM).fieldOf("supportedItems").forGetter(AllureEntry::supportedItems)
     ).apply(instance, AllureEntry::new));
 
     public static final Codec<Holder<AllureEntry>> CODEC = RegistryFileCodec.create(Allure.ALLURE_KEY, DIRECT_CODEC);

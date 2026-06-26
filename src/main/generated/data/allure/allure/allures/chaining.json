@@ -4,5 +4,6 @@
   },
   "name": {
     "translate": "allure.allure.chaining"
-  }
+  },
+  "supportedItems": "#minecraft:swords"
 }

@@ -7,3 +7,4 @@ classTweaker v2 official
 # Fields
 
 # Injection and Extention
+inject-interface net/minecraft/world/item/ItemStack net/acoyt/allure/impl/util/interfaces/ItemStackAccess
