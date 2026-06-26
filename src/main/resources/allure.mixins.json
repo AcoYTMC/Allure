@@ -5,6 +5,7 @@
     "compatibilityLevel": "JAVA_25",
     "mixins": [
         "ItemStackMixin",
+        "LivingEntityMixin",
         "PlayerMixin",
         "access.ItemStackMixin"
     ],
