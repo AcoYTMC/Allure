@@ -29,8 +29,13 @@ public class ItemTooltipsEvent implements BetterItemTooltipEvent {
                 for (Holder<AllureEntry> entryHolder : holderSet) {
                     AllureEntry entry = entryHolder.value();
                     builder.accept(entry.name().copy().withColor(0xFF6050ae));
-                    builder.accept(Component.literal("- ").append(entry.description()).withStyle(ChatFormatting.DARK_GRAY));
-                    //if (entryHolder != holderSet.get(holderSet.size())) builder.accept(Component.literal(""));
+
+                    if (entry.description().isEmpty()) return;
+                    for (int i = 0; i < entry.description().size(); i++) {
+                        builder.accept(Component.literal(i == 0 ? "- " : "  ")
+                                .append(entry.description().get(i))
+                                .withStyle(ChatFormatting.DARK_GRAY));
+                    }
                 }
             }
         }

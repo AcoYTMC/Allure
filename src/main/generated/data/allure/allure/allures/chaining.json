@@ -1,9 +1,15 @@
 {
-  "description": {
-    "translate": "allure.allure.chaining.description"
-  },
+  "description": [
+    {
+      "translate": "allure.allure.chaining.description.0"
+    },
+    {
+      "translate": "allure.allure.chaining.description.1"
+    }
+  ],
   "name": {
     "translate": "allure.allure.chaining"
   },
+  "ramification": "allure:chaining",
   "supportedItems": "#minecraft:swords"
 }

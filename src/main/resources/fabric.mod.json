@@ -19,6 +19,9 @@
         ],
         "fabric-datagen": [
             "net.acoyt.allure.data.AllureDatagen"
+        ],
+        "cardinal-components": [
+            "net.acoyt.allure.impl.cca.AllureComponents"
         ]
     },
     "accessWidener": "allure.classtweaker",
@@ -31,5 +34,10 @@
         "java": ">=21",
         "fabric-api": "*",
         "acornlib": "*"
+    },
+    "custom": {
+        "cardinal-components": [
+            "allure:chaining"
+        ]
     }
 }

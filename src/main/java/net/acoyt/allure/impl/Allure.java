@@ -3,6 +3,8 @@ package net.acoyt.allure.impl;
 import com.mojang.logging.LogUtils;
 import net.acoyt.allure.impl.command.ListAlluresCommand;
 import net.acoyt.allure.impl.index.AllureDataComponents;
+import net.acoyt.allure.impl.index.AllureRamifications;
+import net.acoyt.allure.impl.index.AllureRegistries;
 import net.acoyt.allure.impl.util.AllureEntry;
 import net.acoyt.allure.impl.util.data.AllureReloadListener;
 import net.fabricmc.api.ModInitializer;
@@ -27,6 +29,8 @@ public class Allure implements ModInitializer {
     public void onInitialize() {
         /* Initialization */
         AllureDataComponents.init();
+        AllureRamifications.init();
+        AllureRegistries.init();
 
         /* Reload Listeners */
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(id("allures"), new AllureReloadListener());

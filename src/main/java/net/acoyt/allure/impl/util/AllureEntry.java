@@ -3,6 +3,7 @@ package net.acoyt.allure.impl.util;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.acoyt.allure.impl.Allure;
+import net.acoyt.allure.impl.ramifications.Ramification;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
@@ -15,14 +16,17 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.world.item.Item;
 
+import java.util.List;
+
 /**
  * @author AcoYT
  */
-public record AllureEntry(Component name, Component description, HolderSet<Item> supportedItems) {
+public record AllureEntry(Component name, List<Component> description, HolderSet<Item> supportedItems, Ramification ramification) {
     public static final Codec<AllureEntry> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ComponentSerialization.CODEC.fieldOf("name").forGetter(AllureEntry::name),
-            ComponentSerialization.CODEC.fieldOf("description").forGetter(AllureEntry::description),
-            RegistryCodecs.homogeneousList(Registries.ITEM).fieldOf("supportedItems").forGetter(AllureEntry::supportedItems)
+            ComponentSerialization.CODEC.listOf().fieldOf("description").forGetter(AllureEntry::description),
+            RegistryCodecs.homogeneousList(Registries.ITEM).fieldOf("supportedItems").forGetter(AllureEntry::supportedItems),
+            Ramification.CODEC.fieldOf("ramification").forGetter(AllureEntry::ramification)
     ).apply(instance, AllureEntry::new));
 
     public static final Codec<Holder<AllureEntry>> CODEC = RegistryFileCodec.create(Allure.ALLURE_KEY, DIRECT_CODEC);

@@ -3,6 +3,7 @@ classTweaker v2 official
 # Classes
 
 # Methods
+accessible method net/minecraft/world/entity/player/Player canCriticalAttack (Lnet/minecraft/world/entity/Entity;)Z
 
 # Fields
 

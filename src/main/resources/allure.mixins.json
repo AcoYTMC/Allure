@@ -1,9 +1,11 @@
 {
     "required": true,
     "package": "net.acoyt.allure.mixin",
+    "plugin": "net.acoyt.allure.impl.util.AllureMixinPlugin",
     "compatibilityLevel": "JAVA_25",
     "mixins": [
         "ItemStackMixin",
+        "PlayerMixin",
         "access.ItemStackMixin"
     ],
     "client": [],

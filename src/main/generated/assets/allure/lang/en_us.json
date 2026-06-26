@@ -1,4 +1,5 @@
 {
   "allure.allure.chaining": "Chaining",
-  "allure.allure.chaining.description": "Has a 50% chance to chain a cluster of mobs together when critting."
+  "allure.allure.chaining.description.0": "Has a 50% chance to chain a cluster",
+  "allure.allure.chaining.description.1": "of mobs together when critting."
 }
