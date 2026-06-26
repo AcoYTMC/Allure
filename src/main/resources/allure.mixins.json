@@ -2,7 +2,9 @@
     "required": true,
     "package": "net.acoyt.allure.mixin",
     "compatibilityLevel": "JAVA_25",
-    "mixins": [],
+    "mixins": [
+        "FabricDynamicRegistryProviderEntriesMixin"
+    ],
     "client": [],
     "injectors": {
         "defaultRequire": 1

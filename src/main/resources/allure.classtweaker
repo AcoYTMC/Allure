@@ -1,11 +1,9 @@
 classTweaker v2 official
 
 # Classes
-accessible class net/fabricmc/fabric/api/datagen/v1/provider/FabricDynamicRegistryProvider$RegistryEntries
 
 # Methods
 
 # Fields
-accessible field net/fabricmc/fabric/api/datagen/v1/provider/FabricDynamicRegistryProvider$Entries queuedEntries Ljava/util/Map;
 
 # Injection and Extention

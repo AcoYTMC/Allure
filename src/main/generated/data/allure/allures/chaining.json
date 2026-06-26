@@ -1,0 +1,8 @@
+{
+  "description": {
+    "translate": "allure.allure.chaining.description"
+  },
+  "name": {
+    "translate": "allure.allure.chaining"
+  }
+}
