@@ -7,6 +7,7 @@ import net.acoyt.allure.impl.util.AllureEntry;
 import net.acoyt.allure.impl.util.data.AllureReloadListener;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
@@ -29,6 +30,8 @@ public class Allure implements ModInitializer {
 
         /* Reload Listeners */
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(id("allures"), new AllureReloadListener());
+
+        DynamicRegistries.registerSynced(ALLURE_KEY, AllureEntry.DIRECT_CODEC);
 
         /* Commands */
         CommandRegistrationCallback.EVENT.register(ListAlluresCommand::register);

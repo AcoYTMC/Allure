@@ -4,8 +4,10 @@ import net.acoyt.allure.data.provider.AllureDynamicRegistryProvider;
 import net.acoyt.allure.data.provider.lang.AllureLanguageProvider;
 import net.acoyt.allure.impl.Allure;
 import net.acoyt.allure.impl.index.data.AllureEntries;
+import net.acoyt.allure.impl.util.AllureEntry;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.minecraft.core.RegistrySetBuilder;
 
 /**
