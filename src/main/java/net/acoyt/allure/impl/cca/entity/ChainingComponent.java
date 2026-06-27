@@ -3,8 +3,11 @@ package net.acoyt.allure.impl.cca.entity;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.acoyt.allure.impl.Allure;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.UniquelyIdentifyable;
 import net.minecraft.world.level.storage.ValueInput;
@@ -28,7 +31,7 @@ public class ChainingComponent implements AutoSyncedComponent, CommonTickingComp
     public static final int DEFAULT_TIME = 100; // 5s
     private final LivingEntity living;
 
-    private List<ChainedEntry> chainedEntries = new ArrayList<>();
+    private final List<ChainedEntry> chainedEntries = new ArrayList<>();
 
     public ChainingComponent(LivingEntity living) {
         this.living = living;
@@ -39,18 +42,23 @@ public class ChainingComponent implements AutoSyncedComponent, CommonTickingComp
     }
 
     public void tick() {
-        if (living.isRemoved() || !living.isAlive()) return;
+        if (!isValidEntity(living) || !isChained()) return;
         for (ChainedEntry entry : chainedEntries) {
             entry.tick();
-            if (entry.shouldEnd()) {
-                chainedEntries.remove(entry);
-                Allure.LOGGER.info("Removed the silly from {}!", living.getScoreboardName());
-            }
+        }
+
+        List<ChainedEntry> modified = chainedEntries.stream().filter(entry -> !entry.shouldEnd() && isValidEntity(entry.getChainedToFromLevel(living.level()))).toList();
+        if (modified.size() != chainedEntries.size()) {
+            Allure.LOGGER.info("Removed {} entries from entity {}", chainedEntries.size() - modified.size(), living.getDisplayName().getString());
+            chainedEntries.clear();
+            chainedEntries.addAll(modified);
+            sync();
         }
     }
 
     public void readData(ValueInput input) {
-        chainedEntries = input.read("ChainedEntries", ChainedEntry.CODEC.listOf()).orElse(new ArrayList<>());
+        chainedEntries.clear();
+        chainedEntries.addAll(input.read("ChainedEntries", ChainedEntry.CODEC.listOf()).orElse(List.of()));
     }
 
     public void writeData(ValueOutput output) {
@@ -62,45 +70,84 @@ public class ChainingComponent implements AutoSyncedComponent, CommonTickingComp
     }
 
     public void addChainedEntries(ChainedEntry... chainedEntries) {
+        if (!isValidEntity(living)) return;
+        Allure.LOGGER.info("Added {} entries to entity {}", chainedEntries.length, living.getDisplayName().getString());
         this.chainedEntries.addAll(Arrays.asList(chainedEntries));
         sync();
     }
 
     public void addChainedEntries(LivingEntity... entities) {
-        this.chainedEntries.addAll(Arrays.stream(entities).map(ChainedEntry::of).toList());
-        sync();
+        addChainedEntries(Arrays.stream(entities).map(ChainedEntry::of).toArray(ChainedEntry[]::new));
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public boolean isChained() {
+        return !getChainedEntries().isEmpty();
+    }
+
+    public static boolean isValidEntity(LivingEntity living) {
+        return living != null && living.isAlive() && !living.isRemoved();
     }
 
     public static class ChainedEntry {
         public static final Codec<ChainedEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.INT.fieldOf("timeLeft").forGetter(ChainedEntry::getTimeLeft),
-                EntityReference.codec().fieldOf("chainedTo").forGetter(ChainedEntry::getChainedTo)
+                ExtraCodecs.ARGB_COLOR_CODEC.fieldOf("color").forGetter(ChainedEntry::getColor),
+                EntityReference.codec().fieldOf("chainedTo").forGetter(ChainedEntry::getChainedTo),
+                Codec.BOOL.fieldOf("source").forGetter(ChainedEntry::isSource),
+                Codec.INT.fieldOf("timeLeft").forGetter(ChainedEntry::getTimeLeft)
         ).apply(instance, ChainedEntry::new));
 
-        private int timeLeft;
-        private EntityReference<UniquelyIdentifyable> chainedTo;
+        private final int color;
+        private final EntityReference<UniquelyIdentifyable> chainedTo;
+        private final boolean source;
+        private int timeLeft = DEFAULT_TIME;
 
-        public ChainedEntry(int timeLeft, EntityReference<UniquelyIdentifyable> reference) {
-            this.timeLeft = timeLeft;
+        public ChainedEntry(int color, EntityReference<UniquelyIdentifyable> reference, boolean source, int timeLeft) {
+            this.color = color;
             this.chainedTo = reference;
+            this.source = source;
+            this.timeLeft = timeLeft;
         }
 
-        public ChainedEntry(int timeLeft, LivingEntity living) {
-            this(timeLeft, EntityReference.of(living));
+        public ChainedEntry(int color, LivingEntity living, boolean source, int timeLeft) {
+            this(color, EntityReference.of(living), source, timeLeft);
+        }
+
+        public ChainedEntry(LivingEntity living, boolean source, int timeLeft) {
+            this(DyeColor.values()[RandomSource.create().nextInt(DyeColor.values().length)].getTextColor(), EntityReference.of(living), source, timeLeft);
+        }
+
+        public static ChainedEntry of(LivingEntity living, boolean source) {
+            return new ChainedEntry(living, source, DEFAULT_TIME);
         }
 
         public static ChainedEntry of(LivingEntity living) {
-            return new ChainedEntry(DEFAULT_TIME, living);
+            return of(living, false);
         }
 
         public void tick() {
             if (timeLeft > 0) {
                 timeLeft--;
+                if (shouldEnd()) {
+                    Allure.LOGGER.info("Ticked entry");
+                }
             }
         }
 
         public boolean shouldEnd() {
             return timeLeft == 0;
+        }
+
+        public int getColor() {
+            return color;
+        }
+
+        public EntityReference<UniquelyIdentifyable> getChainedTo() {
+            return chainedTo;
+        }
+
+        public boolean isSource() {
+            return source;
         }
 
         public int getTimeLeft() {
@@ -111,17 +158,10 @@ public class ChainingComponent implements AutoSyncedComponent, CommonTickingComp
             this.timeLeft = timeLeft;
         }
 
-        public EntityReference<UniquelyIdentifyable> getChainedTo() {
-            return chainedTo;
-        }
-
         @Nullable
         public LivingEntity getChainedToFromLevel(Level level) {
+            if (level == null) return null;
             return chainedTo.getEntity(level::getEntityInAnyDimension, UniquelyIdentifyable.class) instanceof LivingEntity living ? living : null;
-        }
-
-        public void setChainedTo(LivingEntity chainedTo) {
-            this.chainedTo = EntityReference.of(chainedTo);
         }
     }
 }

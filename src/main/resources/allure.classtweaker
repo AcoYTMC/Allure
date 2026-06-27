@@ -4,8 +4,10 @@ classTweaker v2 official
 
 # Methods
 accessible method net/minecraft/world/entity/player/Player canCriticalAttack (Lnet/minecraft/world/entity/Entity;)Z
+accessible method net/minecraft/client/renderer/feature/LeashFeatureRenderer addVertexPair (Lcom/mojang/blaze3d/vertex/VertexConsumer;Lorg/joml/Matrix4fc;FFFFFFIZLnet/minecraft/client/renderer/entity/state/EntityRenderState$LeashState;)V
 
 # Fields
+accessible field net/minecraft/client/renderer/LevelRenderer levelRenderState Lnet/minecraft/client/renderer/state/level/LevelRenderState;
 
 # Injection and Extention
 inject-interface net/minecraft/world/item/ItemStack net/acoyt/allure/impl/util/interfaces/ItemStackAccess
