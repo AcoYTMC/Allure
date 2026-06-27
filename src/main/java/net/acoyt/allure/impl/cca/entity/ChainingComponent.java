@@ -89,6 +89,32 @@ public class ChainingComponent implements AutoSyncedComponent, CommonTickingComp
         return living != null && living.isAlive() && !living.isRemoved();
     }
 
+    public List<LivingEntity> getAllChainedTo() {
+        return getChainedEntries().stream()
+                .filter(entry -> isValidEntity(entry.getChainedToFromLevel(living.level())))
+                .map(entry -> entry.getChainedToFromLevel(living.level()))
+                .toList();
+    }
+
+    public void clearChains() {
+        getAllChainedTo().forEach(entity -> {
+            ChainingComponent chaining = KEY.get(entity);
+            for (ChainedEntry entry : chaining.getChainedEntries()) {
+                List<ChainedEntry> backup = chaining.getChainedEntries();
+                if (entry.getChainedToFromLevel(entity.level()) == living) {
+                    backup = backup.stream().filter(chainedEntry -> chainedEntry != entry).toList();
+                }
+
+                chaining.getChainedEntries().clear();
+                chaining.getChainedEntries().addAll(backup);
+                chaining.sync();
+            }
+        });
+
+        getChainedEntries().clear();
+        sync();
+    }
+
     public static class ChainedEntry {
         public static final Codec<ChainedEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 ExtraCodecs.ARGB_COLOR_CODEC.fieldOf("color").forGetter(ChainedEntry::getColor),

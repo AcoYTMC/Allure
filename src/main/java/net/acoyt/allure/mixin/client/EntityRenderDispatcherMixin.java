@@ -65,9 +65,28 @@ public abstract class EntityRenderDispatcherMixin {
                 Vec3 end = living.getPosition(tickProgress).add(0.0F, living.getBoundingBox().getYsize() / 2.0F, 0.0F);
 
                 poseStack.pushPose();
+
                 poseStack.scale(-1.0F, -1.0F, -1.0F);
-                poseStack.translate(0.0F, -1, 0.0F);
-                collector.submitCustomGeometry(poseStack, RenderTypes.entityTranslucent(CHAINING_TEXTURE, true), new ChainRenderer(start.add(0, self.getBoundingBox().getYsize() / 2.0F, 0), end.add(0, living.getBoundingBox().getYsize() / 2.0F, 0)));
+                poseStack.translate(0.0F, -1.0F, 0.0F);
+
+                collector.submitCustomGeometry(poseStack,
+                        RenderTypes.entityTranslucent(CHAINING_TEXTURE, true),
+                        new ChainRenderer(
+                                start.add(0, self.getBoundingBox().getYsize() / 2.0F, 0),
+                                end.add(0, living.getBoundingBox().getYsize() / 2.0F, 0),
+                                Math.sin(entry.getTimeLeft())
+                        )
+                );
+
+                collector.submitCustomGeometry(poseStack,
+                        RenderTypes.eyes(CHAINING_TEXTURE),
+                        new ChainRenderer(
+                                start.add(0, self.getBoundingBox().getYsize() / 2.0F, 0),
+                                end.add(0, living.getBoundingBox().getYsize() / 2.0F, 0),
+                                Math.sin(entry.getTimeLeft())
+                        )
+                );
+
                 poseStack.popPose();
             }
         }

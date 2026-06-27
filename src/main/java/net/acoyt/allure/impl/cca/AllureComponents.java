@@ -1,6 +1,7 @@
 package net.acoyt.allure.impl.cca;
 
 import net.acoyt.allure.impl.cca.entity.ChainingComponent;
+import net.acoyt.allure.impl.cca.entity.SoulsComponent;
 import net.minecraft.world.entity.LivingEntity;
 import org.ladysnake.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import org.ladysnake.cca.api.v3.entity.EntityComponentInitializer;
@@ -12,5 +13,6 @@ import org.ladysnake.cca.api.v3.entity.RespawnCopyStrategy;
 public class AllureComponents implements EntityComponentInitializer {
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
         registry.beginRegistration(LivingEntity.class, ChainingComponent.KEY).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(ChainingComponent::new);
+        registry.registerForPlayers(SoulsComponent.KEY, SoulsComponent::new, RespawnCopyStrategy.INVENTORY);
     }
 }

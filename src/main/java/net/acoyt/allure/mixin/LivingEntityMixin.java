@@ -1,5 +1,6 @@
 package net.acoyt.allure.mixin;
 
+import net.acoyt.allure.impl.cca.entity.ChainingComponent;
 import net.acoyt.allure.impl.component.AllureComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -14,6 +15,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * @author AcoYT
@@ -34,6 +36,21 @@ public abstract class LivingEntityMixin extends Entity {
                     AllureComponent.getRamifications(stack).forEach(ramification -> ramification.onDamaged(player, source, stack));
                 }
             }
+        }
+    }
+
+    @Inject(
+            method = "checkTotemDeathProtection",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/item/component/DeathProtection;applyEffects(Lnet/minecraft/world/item/ItemStack;" +
+                            "Lnet/minecraft/world/entity/LivingEntity;)V"
+            )
+    )
+    private void allure$unchainIfTotemPop(DamageSource killingDamage, CallbackInfoReturnable<Boolean> cir) {
+        ChainingComponent component = ChainingComponent.KEY.get(this);
+        if (component.isChained()) {
+            component.clearChains();
         }
     }
 }

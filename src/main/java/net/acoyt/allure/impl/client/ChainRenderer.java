@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
@@ -12,7 +13,7 @@ import org.joml.Matrix4f;
  * @author AcoYT
  * Code from <a href="https://github.com/eeverestt/hibiscus/blob/master/src/main/java/com/everest/hibiscus/api/modules/rendering/world/ChainRenderer.java">eeverest/hibiscus</a> with permission
  */
-public record ChainRenderer(Vec3 start, Vec3 end) implements SubmitNodeCollector.CustomGeometryRenderer {
+public record ChainRenderer(Vec3 start, Vec3 end, double sin) implements SubmitNodeCollector.CustomGeometryRenderer {
     public void render(PoseStack.Pose pose, VertexConsumer buffer) {
         start.add(0, 1, 0);
         Vec3 direction = start.subtract(end).normalize();
@@ -43,7 +44,7 @@ public record ChainRenderer(Vec3 start, Vec3 end) implements SubmitNodeCollector
                 pose.rotate(Axis.XP.rotation((float) -(90 * Math.PI / 180)));
             }
 
-            plane(pose, buffer, vec.scale(i), 0.5F, 0.5F, 8, 8, 8, 8, 1, 255, 0xFFFFFF);
+            plane(pose, buffer, vec.scale(i), 0.6F, 0.6F, 8, 8, 8, 8, 1, 127, (int) (LightCoordsUtil.lightCoordsWithEmission(15, 15) * sin));
         }
     }
 

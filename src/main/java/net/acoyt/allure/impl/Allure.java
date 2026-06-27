@@ -3,6 +3,7 @@ package net.acoyt.allure.impl;
 import com.mojang.logging.LogUtils;
 import net.acoyt.allure.impl.command.ListAlluresCommand;
 import net.acoyt.allure.impl.index.AllureDataComponents;
+import net.acoyt.allure.impl.index.AllureEntities;
 import net.acoyt.allure.impl.index.AllureRamifications;
 import net.acoyt.allure.impl.index.AllureRegistries;
 import net.acoyt.allure.impl.util.AllureEntry;
@@ -29,6 +30,7 @@ public class Allure implements ModInitializer {
     public void onInitialize() {
         /* Initialization */
         AllureDataComponents.init();
+        AllureEntities.init();
         AllureRamifications.init();
         AllureRegistries.init();
 
