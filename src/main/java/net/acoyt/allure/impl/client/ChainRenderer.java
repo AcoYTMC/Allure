@@ -44,7 +44,7 @@ public record ChainRenderer(Vec3 start, Vec3 end, double sin) implements SubmitN
                 pose.rotate(Axis.XP.rotation((float) -(90 * Math.PI / 180)));
             }
 
-            plane(pose, buffer, vec.scale(i), 0.6F, 0.6F, 8, 8, 8, 8, 1, 127, (int) (LightCoordsUtil.lightCoordsWithEmission(15, 15) * sin));
+            plane(pose, buffer, vec.scale(i), 0.6F, 0.6F, 8, 8, 8, 8, 1, 127, LightCoordsUtil.lightCoordsWithEmission(15, 15));
         }
     }
 

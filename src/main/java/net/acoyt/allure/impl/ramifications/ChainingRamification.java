@@ -2,7 +2,6 @@ package net.acoyt.allure.impl.ramifications;
 
 import net.acoyt.allure.impl.cca.entity.ChainingComponent;
 import net.acoyt.allure.impl.cca.entity.ChainingComponent.ChainedEntry;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -26,7 +25,7 @@ public class ChainingRamification implements Ramification {
     }
 
     public void onAttack(Player player, Entity target, ItemStack stack) {
-        if (player.getRandom().nextFloat() > chance && target instanceof LivingEntity living) {
+        if (player.getRandom().nextFloat() > chance && target instanceof LivingEntity living && !player.getCooldowns().isOnCooldown(stack)) {
             List<LivingEntity> entities = player.level().getEntitiesOfClass(
                     LivingEntity.class,
                     new AABB(player.getOnPos().atY(player.getBlockY())).inflate(range),
@@ -36,10 +35,10 @@ public class ChainingRamification implements Ramification {
             if (!entities.isEmpty()) {
                 int color = DyeColor.values()[player.getRandom().nextInt(DyeColor.values().length)].getTextColor();
 
-                entities.forEach(entity -> ChainingComponent.KEY.get(entity).addChainedEntries(new ChainedEntry(living, true, color)));
-                ChainingComponent.KEY.get(living).addChainedEntries(entities.stream().map(entity -> new ChainedEntry(entity, false, color)).toArray(ChainedEntry[]::new));
+                entities.forEach(entity -> ChainingComponent.KEY.get(entity).addChainedEntries(new ChainedEntry(color, living, true, ChainingComponent.DEFAULT_TIME)));
+                ChainingComponent.KEY.get(living).addChainedEntries(entities.stream().map(entity -> new ChainedEntry(color, entity, false, ChainingComponent.DEFAULT_TIME)).toArray(ChainedEntry[]::new));
 
-                player.sendOverlayMessage(Component.literal("Added " + entities.size() + " entries to entity " + living.getDisplayName().getString()));
+                //player.sendOverlayMessage(Component.literal("Added " + entities.size() + " entries to entity " + living.getDisplayName().getString()));
                 player.getCooldowns().addCooldown(stack, 20);
             }
         }

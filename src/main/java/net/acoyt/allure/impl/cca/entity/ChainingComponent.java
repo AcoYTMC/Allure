@@ -18,9 +18,10 @@ import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 import org.ladysnake.cca.api.v3.component.tick.CommonTickingComponent;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author AcoYT
@@ -31,7 +32,7 @@ public class ChainingComponent implements AutoSyncedComponent, CommonTickingComp
     public static final int DEFAULT_TIME = 100; // 5s
     private final LivingEntity living;
 
-    private final List<ChainedEntry> chainedEntries = new ArrayList<>();
+    private final ConcurrentMap<Integer, ChainedEntry> chainedEntries = new ConcurrentHashMap<>();
 
     public ChainingComponent(LivingEntity living) {
         this.living = living;
@@ -43,36 +44,39 @@ public class ChainingComponent implements AutoSyncedComponent, CommonTickingComp
 
     public void tick() {
         if (!isValidEntity(living) || !isChained()) return;
-        for (ChainedEntry entry : chainedEntries) {
+        for (ChainedEntry entry : getChainedEntries()) {
             entry.tick();
         }
 
-        List<ChainedEntry> modified = chainedEntries.stream().filter(entry -> !entry.shouldEnd() && isValidEntity(entry.getChainedToFromLevel(living.level()))).toList();
+        List<ChainedEntry> modified = getChainedEntries().stream().filter(entry -> !entry.shouldEnd() && isValidEntity(entry.getChainedToFromLevel(living.level()))).toList();
         if (modified.size() != chainedEntries.size()) {
-            Allure.LOGGER.info("Removed {} entries from entity {}", chainedEntries.size() - modified.size(), living.getDisplayName().getString());
             chainedEntries.clear();
-            chainedEntries.addAll(modified);
-            sync();
+            addChainedEntries(modified.toArray(ChainedEntry[]::new));
         }
     }
 
     public void readData(ValueInput input) {
+        List<ChainedEntry> stored = input.read("ChainedEntries", ChainedEntry.CODEC.listOf()).orElse(List.of());
         chainedEntries.clear();
-        chainedEntries.addAll(input.read("ChainedEntries", ChainedEntry.CODEC.listOf()).orElse(List.of()));
+        for (int i = 0; i < stored.size(); i++) {
+            chainedEntries.put(i, stored.get(i));
+        }
     }
 
     public void writeData(ValueOutput output) {
-        output.store("ChainedEntries", ChainedEntry.CODEC.listOf(), chainedEntries);
+        output.store("ChainedEntries", ChainedEntry.CODEC.listOf(), chainedEntries.values().stream().toList());
     }
 
     public List<ChainedEntry> getChainedEntries() {
-        return chainedEntries;
+        return chainedEntries.values().stream().toList();
     }
 
     public void addChainedEntries(ChainedEntry... chainedEntries) {
         if (!isValidEntity(living)) return;
-        Allure.LOGGER.info("Added {} entries to entity {}", chainedEntries.length, living.getDisplayName().getString());
-        this.chainedEntries.addAll(Arrays.asList(chainedEntries));
+        for (int i = 0; i < chainedEntries.length; i++) {
+            this.chainedEntries.put(i, chainedEntries[i]);
+        }
+
         sync();
     }
 
@@ -154,9 +158,6 @@ public class ChainingComponent implements AutoSyncedComponent, CommonTickingComp
         public void tick() {
             if (timeLeft > 0) {
                 timeLeft--;
-                if (shouldEnd()) {
-                    Allure.LOGGER.info("Ticked entry");
-                }
             }
         }
 
