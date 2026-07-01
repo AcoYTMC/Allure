@@ -8,6 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -28,7 +29,7 @@ public class ItemTooltipsEvent implements BetterItemTooltipEvent {
             if (holderSet.isBound()) {
                 for (Holder<AllureEntry> entryHolder : holderSet) {
                     AllureEntry entry = entryHolder.value();
-                    builder.accept(entry.name().copy().withColor(0xFF6050ae));
+                    builder.accept(entry.name().copy().withColor(ARGB.color(1.0F, entry.color())));
 
                     if (entry.description().isEmpty()) return;
                     for (int i = 0; i < entry.description().size(); i++) {

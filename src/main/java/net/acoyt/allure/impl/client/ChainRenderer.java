@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -44,7 +45,7 @@ public record ChainRenderer(Vec3 start, Vec3 end, double sin) implements SubmitN
                 pose.rotate(Axis.XP.rotation((float) -(90 * Math.PI / 180)));
             }
 
-            plane(pose, buffer, vec.scale(i), 0.6F, 0.6F, 8, 8, 8, 8, 1, 127, LightCoordsUtil.lightCoordsWithEmission(15, 15));
+            plane(pose, buffer, vec.scale(i), 0.6F, 0.6F, 8, 8, 8, 8, 1, 170, LightCoordsUtil.lightCoordsWithEmission(15, 15));
         }
     }
 
@@ -57,30 +58,35 @@ public record ChainRenderer(Vec3 start, Vec3 end, double sin) implements SubmitN
         float uOffset = (float) frameWidth / textureWidth;
         float vOffset = (float) frameHeight / textureHeight;
 
+        int color = 0x58c2c5;
+        int r = ARGB.red(color);
+        int g = ARGB.green(color);
+        int b = ARGB.blue(color);
+
         // Vertices in clockwise order, starting at top left
         buffer.addVertex(positionMatrix,  (float) (-xOffset + offset.x), (float) offset.y, (float) (-zOffset + offset.z))
-                .setColor(255, 255, 255, alpha)
+                .setColor(r, g, b, alpha)
                 .setUv(0, vOffset * (frame - 1))
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(light)
                 .setNormal(pose, 0, 1, 0);
 
         buffer.addVertex(positionMatrix,(float) (xOffset + offset.x), (float) offset.y, (float) (-zOffset + offset.z))
-                .setColor(255, 255, 255, alpha)
+                .setColor(r, g, b, alpha)
                 .setUv(uOffset, vOffset * (frame - 1))
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(light)
                 .setNormal(pose, 0, 1, 0);
 
         buffer.addVertex(positionMatrix,(float) (xOffset + offset.x), (float) offset.y,(float) (zOffset + offset.z))
-                .setColor(255, 255, 255, alpha)
+                .setColor(r, g, b, alpha)
                 .setUv(uOffset, vOffset * frame)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(light)
                 .setNormal(pose, 0, 1, 0);
 
         buffer.addVertex(positionMatrix, (float) (-xOffset + offset.x),  (float) offset.y, (float) (zOffset + offset.z))
-                .setColor(255, 255, 255, alpha)
+                .setColor(r, g, b, alpha)
                 .setUv(0, vOffset * frame)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(light)

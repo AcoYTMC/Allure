@@ -1,5 +1,8 @@
 package net.acoyt.allure.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.acoyt.allure.impl.cca.entity.ChainingComponent;
 import net.acoyt.allure.impl.component.AllureComponent;
 import net.minecraft.server.level.ServerLevel;
@@ -16,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
 
 /**
  * @author AcoYT
@@ -37,6 +42,48 @@ public abstract class LivingEntityMixin extends Entity {
                 }
             }
         }
+    }
+
+    @WrapMethod(method = "actuallyHurt")
+    private void allure$splitDamageForChaining(ServerLevel level, DamageSource source, float dmg, Operation<Void> original) {
+        ChainingComponent component = ChainingComponent.KEY.get(this);
+        List<LivingEntity> entities = component.getAllChainedTo();
+        if (!entities.isEmpty()) {
+            dmg /= (entities.size() + 1);
+            for (LivingEntity entity : entities) {
+                entity.actuallyHurt(level, source, dmg);
+            }
+        }
+
+        original.call(level, source, dmg);
+    }
+
+    @WrapOperation(
+            method = "hurtServer",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/entity/LivingEntity;actuallyHurt(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)V"
+            )
+    )
+    private void allure$splitDamageForChaining(LivingEntity instance, ServerLevel level, DamageSource source, float dmg, Operation<Void> original) {
+        ChainingComponent component = ChainingComponent.KEY.get(instance);
+        List<LivingEntity> entities = component.getAllChainedTo();
+        if (!entities.isEmpty()) {
+            dmg /= (entities.size() + 1);
+            for (LivingEntity entity : entities) {
+                List<LivingEntity> livingEntities = ChainingComponent.KEY.get(entity).getAllChainedTo();
+                if (!livingEntities.isEmpty()) {
+                    dmg /= (livingEntities.size() + 1);
+                    for (LivingEntity livingEntity : livingEntities) {
+                        original.call(livingEntity, level, source, dmg);
+                    }
+                }
+
+                original.call(entity, level, source, dmg);
+            }
+        }
+
+        original.call(instance, level, source, dmg);
     }
 
     @Inject(

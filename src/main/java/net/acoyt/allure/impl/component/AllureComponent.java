@@ -5,12 +5,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.acoyt.allure.impl.index.AllureDataComponents;
 import net.acoyt.allure.impl.ramifications.Ramification;
 import net.acoyt.allure.impl.util.AllureEntry;
+import net.acoyt.allure.impl.util.AllureUtil;
 import net.minecraft.core.HolderSet;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,6 +33,6 @@ public record AllureComponent(HolderSet<AllureEntry> entries) {
     }
 
     public static List<Ramification> getRamifications(ItemStack stack) {
-        return new ArrayList<>(getAllures(stack).stream().map(entry -> entry.value().ramification()).toList());
+        return AllureUtil.flattenList(getAllures(stack).stream().map(entry -> entry.value().ramifications()).toList());
     }
 }

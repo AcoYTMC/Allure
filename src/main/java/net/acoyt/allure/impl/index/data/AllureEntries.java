@@ -12,6 +12,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author AcoYT
@@ -26,7 +27,8 @@ public interface AllureEntries {
                 Component.translatable("allure.allure.chaining"),
                 Arrays.asList(Component.translatable("allure.allure.chaining.description.0"), Component.translatable("allure.allure.chaining.description.1")),
                 itemHolder.getOrThrow(ItemTags.SWORDS),
-                AllureRamifications.CHAINING
+                List.of(AllureRamifications.CHAINING),
+                0x6050ae
         );
     });
 }
