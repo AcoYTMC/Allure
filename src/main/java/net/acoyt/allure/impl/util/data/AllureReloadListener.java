@@ -31,6 +31,8 @@ public class AllureReloadListener extends SimpleReloadListener<Map<Identifier, A
     public void apply(Map<Identifier, AllureEntry> prepared, SharedState state) {
         ALLURES.clear();
         ALLURES.putAll(prepared);
+
+        BACKWARDS.clear();
         ALLURES.forEach((id, entry) -> BACKWARDS.put(entry, id));
     }
 }

@@ -16,7 +16,6 @@ import org.joml.Matrix4f;
  */
 public record ChainRenderer(Vec3 start, Vec3 end, double sin) implements SubmitNodeCollector.CustomGeometryRenderer {
     public void render(PoseStack.Pose pose, VertexConsumer buffer) {
-        start.add(0, 1, 0);
         Vec3 direction = start.subtract(end).normalize();
         double horizontalMagnitude = direction.horizontalDistance();
         double angle = Math.acos(direction.x / direction.horizontalDistance());
